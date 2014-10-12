@@ -1,5 +1,5 @@
 ---
-mgmt_host: 172.20.8.116
+mgmt_host: "{{ groups['one-mgmt'][0] }}"
 ansible_ssh_port: 22
 # 5900:6000 NoVNC Ports
 # 49152:49216 Live migration

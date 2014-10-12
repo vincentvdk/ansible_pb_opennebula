@@ -1,5 +1,0 @@
-[opennebula]
-name=opennebula
-baseurl=http://yum.mattiasgees.be/6/test
-enabled=1
-gpgcheck=0

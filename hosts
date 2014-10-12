@@ -1,0 +1,6 @@
+[one-mgmt]
+192.168.122.131
+
+[kvmnodes]
+192.168.122.34 listen_addr=eth0
+
