@@ -1,0 +1,39 @@
+---
+- name: install packages
+  action: yum name=opennebula-node-kvm
+
+- name: configure udev
+  action: copy src=80-kvm.rules dest=/etc/udev/rules.d/80-kvm.rules owner=root group=root mode=644
+
+- name: configure libvirt
+  action: template src=libvirtd.conf.j2 dest=/etc/libvirt/libvirtd.conf 
+  notify: restart libvirtd
+
+- name: fetch oneadmin ssh public key
+  action: fetch dest=/tmp src=/var/lib/one/.ssh/{{ item }}
+  with_items:
+    - id_dsa.pub
+    - id_rsa.pub
+    - config
+    - id_dsa
+    - id_rsa
+  delegate_to: "{{ mgmt_host }}"
+
+- name: configure ssh authorized keys
+  action: authorized_key user=oneadmin key="{{ lookup('file', '/tmp/' + mgmt_host + '/var/lib/one/.ssh/' + item  ) }}"
+  with_items:
+    - id_dsa.pub
+    - id_rsa.pub
+
+- name: copy ssh keys and files to host
+  action: copy src=/tmp/{{ mgmt_host }}/var/lib/one/.ssh/{{ item }} dest=/var/lib/one/.ssh owner=oneadmin group=oneadmin
+  with_items:
+    - id_dsa.pub
+    - id_dsa
+    - id_rsa.pub
+    - id_rsa
+    - config
+
+- name: set SELinux label on authorized_keys
+  action: file path=/var/lib/one/.ssh/authorized_keys setype=ssh_home_t
+

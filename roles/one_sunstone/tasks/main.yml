@@ -1,0 +1,33 @@
+---
+- name: install packages 
+  action: yum name={{ item }} state=installed
+  with_items:
+    - opennebula-sunstone
+    - httpd
+    - memcached
+
+- name: start and enable Apache and memcache
+  action: service name={{ item }} state=started enabled=true
+  with_items:
+    - httpd
+    - memcached
+
+- name: copy passenger repo key
+  action: copy src=RPM-GPG-KEY-passenger dest=/etc/pki/rpm-gpg/RPM-GPG-KEY-passenger owner=root group=root mode=644
+
+- name: configure passenger repo
+  action: copy src=passenger.repo dest=/etc/yum.repos.d/passenger.repo owner=root group=root mode=644
+
+- name: install mod_passenger
+  action: yum name=mod_passenger state=installed
+
+- name: install Ruby memcache client
+  action: gem name=memcache-client state=present
+
+- name: configure apache for passenger
+  action: template src=passenger.conf.j2 dest=/etc/httpd/conf.d/passenger.conf
+  notify: restart httpd
+
+- name: configure apache for Sunstone
+  action: template src=one_sunstone.conf.j2 dest=/etc/httpd/conf.d/one_sunstone.conf
+  notify: restart httpd

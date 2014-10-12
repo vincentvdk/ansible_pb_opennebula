@@ -1,0 +1,19 @@
+### Name: Phusion Passenger RPM Repository for Red Hat Enterprise 6
+### URL: http://passenger.stealthymonkeys.com/
+[passenger]
+name = Red Hat Enterprise $releasever - Phusion Passenger
+baseurl = http://passenger.stealthymonkeys.com/rhel/$releasever/$basearch
+mirrorlist = http://passenger.stealthymonkeys.com/rhel/mirrors
+#mirrorlist = file:///etc/yum.repos.d/mirrors-passenger
+enabled = 1
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-passenger
+gpgcheck = 1
+
+### Name: Phusion Passenger RPM Repository for Red Hat Enterprise 6 (TESTING)
+### URL: http://passenger.stealthymonkeys.com/
+[passenger-testing]
+name = Red Hat Enterprise $releasever - Phusion Passenger - TEST
+baseurl = http://passenger.stealthymonkeys.com/rhel/$releasever/$basearch/testing/
+enabled = 0
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-passenger
+gpgcheck = 0

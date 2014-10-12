@@ -1,0 +1,3 @@
+ConnectTimeout 5
+Host *
+    StrictHostKeyChecking no

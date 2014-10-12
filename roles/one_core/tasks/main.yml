@@ -1,0 +1,85 @@
+---
+- name: Set SELinux in Permissive mode
+  action: selinux policy=targeted state=permissive
+
+- name: install Opennebula packages
+  action: yum name={{ item }} state=installed
+  with_items:
+    - opennebula-server
+    - opennebula-sunstone
+    - opennebula-ruby
+    - opennebula-java
+    - opennebula-gate
+    - opennebula-flow
+
+- name: install required packages
+  action: yum name={{ item }} state=installed
+  with_items:
+    - mysql-server
+    - MySQL-python
+    - ruby-devel
+    - make
+    - gcc
+    - mysql-devel
+    - curl-devel
+    - expat-devel
+    - libxml2-devel
+    - libxslt-devel
+    - rubygem-rake
+    - gcc-c++
+    - sqlite-devel
+
+- name: install nokogiri specific vesion
+  action: gem name=nokogiri state=present version=1.5.11
+
+- name: install required Ruby gems
+  action: gem name={{ item }} state=present
+  with_items:
+    - sqlite3
+    - json
+    - rack
+    - sinatra
+    - thin
+    - amazon-ec2
+    - uuidtools
+    - curb
+    - mysql
+    - sequel
+    - net-ldap
+    - treetop
+    - parse-cron
+    - aws-sdk
+
+- name: start MySQL server
+  action: service name=mysqld state=started enabled=yes
+
+- name: set the MySQL root account credentials
+  action: mysql_user name=root host={{ item }} password={{ mysql_root_pwd }}
+  with_items:
+    - "{{ ansible_fqdn }}"
+    - ::1
+    - 127.0.0.1
+    - localhost
+  when: ansible_hostname != 'localhost'
+
+- name: set my.cnf for root
+  action: template src="my.cnf.j2" dest=/root/.my.cnf owner=root mode=600
+
+- name: create opennebula mysql user
+  action: mysql_user login_user={{ mysql_root_user }} login_password={{ mysql_root_pwd }} name={{ oneadmin_mysql_user }} password={{ oneadmin_mysql_pwd }} priv="opennebula.*:ALL"
+
+- name: deploy oned.conf
+  action: template src="oned.conf.j2" dest=/etc/one/oned.conf owner=root group=oneadmin mode=0640
+  notify: restart opennebula
+
+- name: set oneadmin pwd
+  action: template src=one_auth.j2 dest=/var/lib/one/.one/one_auth owner=oneadmin group=oneadmin mode=0600
+  notify:
+    - restart httpd
+    - restart oned
+
+- name: create openssh keys for oneadmin
+  action: user name=oneadmin generate_ssh_key=yes ssh_key_bits=2048
+
+- name: set ssh config file for oneadmin
+  action: copy src=config dest=/var/lib/one/.ssh/config owner=oneadmin group=oneadmin mode=0600

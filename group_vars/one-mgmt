@@ -1,0 +1,9 @@
+---
+ansible_ssh_port: 22
+# Port 80 is for webaccess to Sunstone
+# Port 29876 is for the VNC proxy
+in_ports:
+  - 80
+  - 443
+  - 29876
+oneadmin_pwd: oneadmin

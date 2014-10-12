@@ -1,0 +1,7 @@
+---
+- name: restart opennebula
+  action: service name=opennebula state=restarted
+- name: restart httpd
+  action: service name=httpd state=restarted
+- name: restart oned
+  action: service name=opennebula state=restarted

@@ -1,0 +1,6 @@
+one_version:
+ansible_ssh_port: 22
+oneadmin_pwd: oneadmin
+in_ports:
+  - 80
+  - 443

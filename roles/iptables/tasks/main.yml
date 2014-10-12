@@ -1,0 +1,4 @@
+- name: configure firewall
+  template: src=iptables.j2 dest=/etc/sysconfig/iptables owner=root mode=600 seuser="system_u" setype="system_conf_t"
+  notify:
+  - restart iptables

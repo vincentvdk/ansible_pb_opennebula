@@ -1,0 +1,8 @@
+---
+- hosts: one-mgmt
+  user: root
+  roles:
+    - iptables
+    - { role: yumrepos, repos: [epel, opennebula]}
+    - one_core
+    - one_sunstone

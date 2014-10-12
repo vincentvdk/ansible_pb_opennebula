@@ -1,0 +1,32 @@
+*nat
+:PREROUTING ACCEPT [1:60]
+:POSTROUTING ACCEPT [1:72]
+:OUTPUT ACCEPT [1:72]¬
+
+COMMIT
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [43:6253]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+## {{ansible_managed}} 
+## Ports added by Ansible 
+-A INPUT -p tcp -m state --state NEW -m tcp --dport {{ ansible_ssh_port }} -j ACCEPT
+{% for port in in_ports %}
+-A INPUT -p tcp -m state --state NEW -m tcp --dport {{ port }} -j ACCEPT
+{% endfor %}
+##
+##
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT
+*mangle
+:PREROUTING ACCEPT [47:14046]
+:INPUT ACCEPT [47:14046]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [43:6253]
+:POSTROUTING ACCEPT [43:6253]
+
+COMMIT

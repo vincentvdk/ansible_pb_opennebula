@@ -1,0 +1,10 @@
+[one-mgmt]
+172.20.8.116
+
+[kvmnodes]
+172.20.8.103 listen_addr=eth0
+172.20.8.105 listen_addr=eth0
+172.20.8.107 listen_addr=eth0
+172.20.8.109 listen_addr=eth0
+
+#one-2 listen_addr=eth1
