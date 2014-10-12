@@ -1,0 +1,53 @@
+== Opennebula playbooks
+Ansible playbooks to deploy Opennebula. This playbooks support deployment
+on *CentOS 6.x* and *KVM* as hypervisor.
+
+This inventory includes some roles to configure iptables and to add some
+necessary inventories. Feel free to integrate this into your own way of
+doing things.
+
+Currently these playbooks configure a basic Opennebula setup. Things like
+SSL, LDAP, Gluster etc.. are not yet included. 
+
+== How to use
+Edit the _hosts_ file and add your hosts.
+
+[NOTE]
+You need to deploy the management host first because we'll fetch the SSH
+keys from this host when the hypervisor nodes get deployed.
+
+=== Edit the inventory
+Edit the +hosts+ file. Put the management host under +[one-mgmt]+
+
+[bash]
+----
+[one-mgmt]
+192.168.122.131
+----
+
+Put all your hypervisor hosts under +[kvmnodes]+
+
+[bash]
+----
+[kvmnodes]
+192.168.122.34 listen_addr=eth0
+----
+
+=== execute the playbooks
+Execute the +one_core+ playbook to deploy the management node including the
+Sunstone webui.
+
+[bash]
+----
+ansible-playbook -i hosts one_core.yml -u root -k
+----
+
+Next you can deploy the hypervisor nodes
+
+[bash]
+----
+ansible-playbook -i hosts one_kvmnode.yml -u root -k
+----
+
+[NOTE]
+We assume you have +libselinux-python+ installed on all hosts.
