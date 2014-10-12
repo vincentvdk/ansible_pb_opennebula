@@ -33,7 +33,7 @@ Put all your hypervisor hosts under +[kvmnodes]+
 192.168.122.34 listen_addr=eth0
 ----
 
-=== execute the playbooks
+=== Execute the playbooks
 Execute the +one_core+ playbook to deploy the management node including the
 Sunstone webui.
 
